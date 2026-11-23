@@ -1,0 +1,69 @@
+# ============================================================
+# Configuración única del proyecto. NADA de esto va escrito a mano
+# en los notebooks: todo se lee con load_config().
+# Los valores marcados con (provisional) se confirman con datos de
+# train en las Acciones 6 a 8.
+# ============================================================
+
+paths:
+  raw_dir: data/raw
+  processed_dir: data/processed
+  models_dir: models
+  figures_dir: reports/figures
+  merged_file: data/processed/train_merged.parquet
+
+seeds: [19, 69, 79]          # semilla principal = seeds[0]; las 3 se usan en la Etapa 4
+
+split:
+  train: 0.70
+  dev: 0.15
+  test: 0.15
+  # El corte es por VALOR de TransactionDT, no por posición de fila,
+  # para que un empate de tiempo no rompa max(t_train) < min(t_dev)
+
+columns:
+  target: isFraud
+  id: TransactionID
+  time: TransactionDT
+  amount: TransactionAmt
+  drop: [TransactionID, TransactionDT]   # TransactionDT se descarta tras derivar la hora
+  keep_flags: [has_identity]
+  # códigos numéricos que en realidad son categorías (no escalar, no one-hot)
+  categorical_numeric_coded: [card1, card2, card3, card5, addr1, addr2]
+  # solo candidatas (V de Cramér < 0.03); NO se descartan en la Etapa 2
+  drop_candidates: [card4, M5, id_23, id_27, id_34]
+
+derived:
+  hour_period: 24                 # hora relativa (el desfase de TransactionDT es desconocido)
+  seconds_per_hour: 3600
+  try_day_of_week: false          # decisión abierta 5: solo se prueba en dev, no se asume
+  use_absolute_day: false         # nunca: crece con el tiempo y dev/test caerían fuera de rango
+
+preprocessing:
+  add_null_indicators: true       # obligatorio: ningún nulo se imputa sin indicador (A10)
+  clip_z: 10                      # recorte de |z| tras estandarizar (null = sin recorte)
+  numeric_impute: median          # (la constante se decide con la ablación en dev)
+  categorical_missing_label: missing
+  unknown_label: unknown          # categorías raras o nuevas en dev/test
+  onehot_max_cardinality: 10      # (provisional) se fija mirando nunique en train
+  min_category_freq: 50           # (provisional) se fija mirando frecuencias en train
+  min_indicator_rows: 50          # un patrón con menos de 50 filas nulas (o presentes) en train no genera indicador
+  amt_price_point_min_freq: 100   # (provisional) se fija contando importes exactos en train
+  skew_threshold: 2.0             # (provisional) log1p solo si min >= 0 y asimetría > umbral
+  corr_threshold: 0.95            # (provisional) se elige con el reporte 0.90 / 0.95 / 0.99
+  corr_report_thresholds: [0.90, 0.95, 0.99]
+  corr_protect: [has_identity]    # nunca se elimina (decisión de la Acción 2)
+  xgb_native_nan: false           # variante opcional para XGBoost (ablación)
+  no_scale: [hour_sin, hour_cos]  # ya están acotadas en [-1, 1] y forman un par cíclico
+
+imbalance:
+  strategy: class_weight          # class_weight | focal (se comparan en la Etapa 3)
+  class_weight_mode: balanced     # w_c = n / (2 * n_c), con n_c contado SOLO en train
+  focal_gamma: 2.0
+  focal_alpha: null               # solo si strategy = focal; se busca en la Etapa 3
+  resample: false                 # nunca: dev y test conservan la distribución real
+
+cost:
+  c_FN: 10                        # supuesto: un fraude que se escapa cuesta 10 veces una falsa alarma
+  c_FP: 1
+  target_precision: 0.5           # para "recall @ precisión fija"
