@@ -1,2 +1,5 @@
 # No exportar los datos 
 data/ 
+.pytest_cache
+
+.DL/
