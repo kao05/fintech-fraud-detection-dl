@@ -1,0 +1,5 @@
+#,Capa,Tipo,Salida,Parámetros,Detalle
+0,x,InputLayer,"(383,)",0,
+1,dense,Dense,"(256,)",98304,"unidades=256, activación=relu, sesgo=True, inicialización=HeNormal"
+2,dense_1,Dense,"(128,)",32896,"unidades=128, activación=relu, sesgo=True, inicialización=HeNormal"
+3,fraud_prob,Dense,"(1,)",129,"unidades=1, activación=sigmoid, sesgo=True, inicialización=GlorotUniform"

@@ -1,0 +1,51 @@
+#,Capa,Tipo,Salida,Parámetros,Detalle
+0,card1_idx,InputLayer,"(1,)",0,
+1,card2_idx,InputLayer,"(1,)",0,
+2,card3_idx,InputLayer,"(1,)",0,
+3,card5_idx,InputLayer,"(1,)",0,
+4,addr1_idx,InputLayer,"(1,)",0,
+5,addr2_idx,InputLayer,"(1,)",0,
+6,P_emaildomain_idx,InputLayer,"(1,)",0,
+7,R_emaildomain_idx,InputLayer,"(1,)",0,
+8,id_30_idx,InputLayer,"(1,)",0,
+9,id_31_idx,InputLayer,"(1,)",0,
+10,id_33_idx,InputLayer,"(1,)",0,
+11,DeviceInfo_idx,InputLayer,"(1,)",0,
+12,amt_price_point_idx,InputLayer,"(1,)",0,
+13,emb_card1_idx,Embedding,"(1, 32)",30272,"vocabulario=946, dimensión=32, L2=1e-05"
+14,emb_card2_idx,Embedding,"(1, 32)",14240,"vocabulario=445, dimensión=32, L2=1e-05"
+15,emb_card3_idx,Embedding,"(1, 11)",319,"vocabulario=29, dimensión=11, L2=1e-05"
+16,emb_card5_idx,Embedding,"(1, 13)",585,"vocabulario=45, dimensión=13, L2=1e-05"
+17,emb_addr1_idx,Embedding,"(1, 18)",1296,"vocabulario=72, dimensión=18, L2=1e-05"
+18,emb_addr2_idx,Embedding,"(1, 5)",35,"vocabulario=7, dimensión=5, L2=1e-05"
+19,emb_P_emaildomain_idx,Embedding,"(1, 15)",810,"vocabulario=54, dimensión=15, L2=1e-05"
+20,emb_R_emaildomain_idx,Embedding,"(1, 12)",420,"vocabulario=35, dimensión=12, L2=1e-05"
+21,emb_id_30_idx,Embedding,"(1, 16)",928,"vocabulario=58, dimensión=16, L2=1e-05"
+22,emb_id_31_idx,Embedding,"(1, 17)",1105,"vocabulario=65, dimensión=17, L2=1e-05"
+23,emb_id_33_idx,Embedding,"(1, 13)",585,"vocabulario=45, dimensión=13, L2=1e-05"
+24,emb_DeviceInfo_idx,Embedding,"(1, 21)",2142,"vocabulario=102, dimensión=21, L2=1e-05"
+25,emb_amt_price_point_idx,Embedding,"(1, 32)",9440,"vocabulario=295, dimensión=32, L2=1e-05"
+26,x,InputLayer,"(383,)",0,
+27,flatten,Flatten,"(32,)",0,
+28,flatten_1,Flatten,"(32,)",0,
+29,flatten_2,Flatten,"(11,)",0,
+30,flatten_3,Flatten,"(13,)",0,
+31,flatten_4,Flatten,"(18,)",0,
+32,flatten_5,Flatten,"(5,)",0,
+33,flatten_6,Flatten,"(15,)",0,
+34,flatten_7,Flatten,"(12,)",0,
+35,flatten_8,Flatten,"(16,)",0,
+36,flatten_9,Flatten,"(17,)",0,
+37,flatten_10,Flatten,"(13,)",0,
+38,flatten_11,Flatten,"(21,)",0,
+39,flatten_12,Flatten,"(32,)",0,
+40,concatenate,Concatenate,"(620,)",0,
+41,dense,Dense,"(256,)",158720,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+42,batch_normalization,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+43,activation,Activation,"(256,)",0,activación=relu
+44,dropout,Dropout,"(256,)",0,tasa=0.3
+45,dense_1,Dense,"(128,)",32768,"unidades=128, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+46,batch_normalization_1,BatchNormalization,"(128,)",512,"momentum=0.99, épsilon=0.001"
+47,activation_1,Activation,"(128,)",0,activación=relu
+48,dropout_1,Dropout,"(128,)",0,tasa=0.3
+49,fraud_prob,Dense,"(1,)",129,"unidades=1, activación=sigmoid, sesgo=True, inicialización=GlorotUniform"

@@ -1,0 +1,30 @@
+#,Capa,Tipo,Salida,Parámetros,Detalle
+0,x,InputLayer,"(383,)",0,
+1,dense,Dense,"(256,)",98048,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+2,batch_normalization,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+3,activation,Activation,"(256,)",0,activación=relu
+4,dense_1,Dense,"(256,)",65536,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+5,batch_normalization_1,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+6,activation_1,Activation,"(256,)",0,activación=relu
+7,dropout,Dropout,"(256,)",0,tasa=0.2
+8,dense_2,Dense,"(256,)",65536,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+9,batch_normalization_2,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+10,add,Add,"(256,)",0,
+11,activation_2,Activation,"(256,)",0,activación=relu
+12,dense_3,Dense,"(256,)",65536,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+13,batch_normalization_3,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+14,activation_3,Activation,"(256,)",0,activación=relu
+15,dropout_1,Dropout,"(256,)",0,tasa=0.2
+16,dense_4,Dense,"(256,)",65536,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+17,batch_normalization_4,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+18,add_1,Add,"(256,)",0,
+19,activation_4,Activation,"(256,)",0,activación=relu
+20,dense_5,Dense,"(256,)",65536,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+21,batch_normalization_5,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+22,activation_5,Activation,"(256,)",0,activación=relu
+23,dropout_2,Dropout,"(256,)",0,tasa=0.2
+24,dense_6,Dense,"(256,)",65536,"unidades=256, activación=linear, sesgo=False, inicialización=HeNormal, L2=1e-05"
+25,batch_normalization_6,BatchNormalization,"(256,)",1024,"momentum=0.99, épsilon=0.001"
+26,add_2,Add,"(256,)",0,
+27,activation_6,Activation,"(256,)",0,activación=relu
+28,fraud_prob,Dense,"(1,)",257,"unidades=1, activación=sigmoid, sesgo=True, inicialización=GlorotUniform"

@@ -12,7 +12,7 @@ paths:
   figures_dir: reports/figures
   merged_file: data/processed/train_merged.parquet
 
-seeds: [19, 69, 79]          # semilla principal = seeds[0]; las 3 se usan en la Etapa 4
+seeds: [19, 69, 79]          # semilla principal = seeds[0]; las 3 se usan para repetir la configuración final
 
 split:
   train: 0.70
@@ -67,3 +67,51 @@ cost:
   c_FN: 10                        # supuesto: un fraude que se escapa cuesta 10 veces una falsa alarma
   c_FP: 1
   target_precision: 0.5           # para "recall @ precisión fija"
+
+
+# ============================================================
+# ETAPA 3: modelado
+# ============================================================
+evaluation:
+  primary_metric: pr_auc
+  threshold_selection: dev              # los umbrales solo se eligen con dev
+  bootstrap: {enabled: false, n: 200}   # opcional: intervalo de PR-AUC en dev
+
+results:
+  path: reports/results.csv
+  predictions_dir: reports/preds        # predicciones en dev de las configuraciones finales (ignorado en git)
+
+baselines:
+  logreg:
+    C_grid: [0.01, 0.1, 1, 10]          # C se elige en dev
+    max_iter: 1000
+  xgboost:
+    params:
+      n_estimators: 2000
+      learning_rate: 0.05
+      max_depth: 6
+      subsample: 0.8
+      colsample_bytree: 0.8
+      tree_method: hist
+      eval_metric: aucpr
+    scale_pos_weight: null              # null = se calcula con train (27.43)
+    early_stopping_rounds: 100
+
+ablations:
+  amount_cols: [amt_cents, amt_freq]    # variantes del importe (b) y (c)
+  null_indicator_prefix: null_pat_      # variante de imputación (c)
+
+nn:
+  common: {batch_size: 2048, max_epochs: 100, optimizer: adam, learning_rate: 1.0e-3, early_stopping_patience: 10}   # (provisional)
+  embedding_dim: {cap: 32, factor: 1.6, power: 0.56}     # dim = min(cap, round(factor * vocab ** power)); punto de partida
+  architectures:                                          # valores iniciales; la búsqueda (Acción 8) los ajusta
+    mlp:              {hidden: [256, 128]}
+    mlp_regularizado: {hidden: [256, 128], dropout: 0.3, l2: 1.0e-5, batch_norm: true}
+    mlp_embeddings:   {hidden: [256, 128], dropout: 0.3, l2: 1.0e-5, batch_norm: true}
+    residual_mlp:     {width: 256, n_blocks: 3, dropout: 0.2, l2: 1.0e-5}
+  search: {n_trials: 10, seed: 19}                        # (provisional)
+  strategies: [class_weight, focal]
+
+runtime:
+  n_threads: 6          # mitad de los 12 hilos del Ryzen 5 7600X, para no sobrecalentar
+  inter_op_threads: 2   # TensorFlow: paralelismo entre operaciones
