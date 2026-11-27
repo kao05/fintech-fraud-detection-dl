@@ -56,6 +56,10 @@ def _dev_pr_auc_callback(x_dev, y_dev, batch_size: int = 8192):
 
         def on_epoch_end(self, epoch, logs=None):
             p = self.model.predict(x_dev, batch_size=batch_size, verbose=0).ravel()
+            if not np.isfinite(p).all():
+                raise FloatingPointError(
+                    f"El modelo produjo predicciones no finitas en dev al final de la época {epoch + 1}."
+                )
             s = float(average_precision_score(y_dev, p))
             self.scores.append(s)
             if logs is not None:
@@ -108,7 +112,10 @@ def train_model(model, train, dev, cfg, strategy, seed, *, kind, variant="", hyp
             apply_class_balancing=alpha is not None)
         class_weight = None
 
-    model.compile(optimizer=keras.optimizers.Adam(learning_rate=lr), loss=loss)
+    optimizer_args = {"learning_rate": lr}
+    if strategy == "focal":
+        optimizer_args["global_clipnorm"] = 1.0
+    model.compile(optimizer=keras.optimizers.Adam(**optimizer_args), loss=loss)
 
     dev_cb = _dev_pr_auc_callback(x_dv, y_dv_a)
     callbacks = [dev_cb,   # debe ir ANTES del early stopping: escribe val_pr_auc en los logs

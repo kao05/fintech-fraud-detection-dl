@@ -3,3 +3,8 @@ data/
 .pytest_cache
 
 .DL/
+
+
+models/nn
+
+reports/preds
